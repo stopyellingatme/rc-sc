@@ -1,0 +1,34 @@
+
+# COW SAY WHAT?
+screenfetch | lolcat
+# cowsay $(fortune -a) | lolcat
+# Random Color please!
+pastel random -n 1
+
+
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
+ZSH_THEME="bira"
+
+
+
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=( sudo git go npm node zsh-navigation-tools python zsh-256color buffalo terminitor ubuntu docker docker-compose zsh-autosuggestions )
+autoload -U compinit && compinit
+
+
+# Initialize key bindings
+xbindkeys
+
+
+# Copy .zshrc && .bashrc to the Code folder for easier backup and source controling
+cp ~/.zshrc ~/Documents/Code/shell_config_backup
+cp ~/.bashrc ~/Documents/Code/shell_config_backup
+cp -r ~/.sconfig ~/Documents/Code/shell_config_backup
+
+source "$HOME/.bashrc"

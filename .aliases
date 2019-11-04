@@ -1,0 +1,354 @@
+### ###                                   ### ###
+### ###    Helpful Aliases & Functions    ### ###
+### ###                                   ### ###
+
+# alias sfig="code --file-uri $HOME/.sconfig/.aliases"
+alias sfig="code -n && code -a $HOME/.sconfig/.aliases"
+alias zfig="code $HOME/.zshrc"
+alias bfig="code $HOME/.bashrc"
+alias omz="xdg-open $HOME/.oh-my-zsh"
+alias sz="source $HOME/.zshrc" 
+alias ocd="xdg-open ."
+alias codee="code ."
+alias mk="mkdir"
+alias rm="sudo rm -rf"
+alias kk="clear"
+
+alias cdz="cd $HOME/Documents/Code/shell_config_backup"
+alias cdy="cd $HOME/Documents/Youtube_DL"
+alias cdc="cd $HOME/Documents/Code"
+alias cdg="cd $HOME/go"
+alias cdp="cd $HOME/projects"
+alias cdh="cd $HOME/"
+
+# Executes an la command after cd-ing 
+cd () { builtin cd "$@" && exa -algh }
+
+# I often make this mistake
+alias cd..="cd .."
+# Because sometimes you don't have the time to put this two letters
+alias ..='cd ..'
+alias ...='cd ../..'
+# Doing a fast proxy, good for watching netflix and youtube without restrictions
+alias proxy='ssh -C2qTnN -D 8080'
+# To search process with more details
+alias pp="ps axuf | pager"
+# Because NeoVim is awesome :)
+alias vim=nvim
+# Search process by name and highlight !
+psgrep () { ps axuf | grep -v grep | grep "$@" -i --color=auto; }
+# Search for files and page it
+search () { find . -iname "*$@*" | less; }
+# Better ls
+alias ld="exa -algh"
+# What cat is supposed to be
+alias cat="bat"
+# Find(s) big brother
+alias find="fd"
+# Terminal Hex Viewer/Editor
+alias hex="hexyl"
+# Better grep impl
+alias rp="ripgrep"
+
+
+### ###                          ### ###
+### ###   Nice Little Spacer     ### ###
+### ###                          ### ###
+
+# Pacman Aliases
+alias pac="sudo pacman"
+# Update pacman
+alias pacup="sudo pacman -Syyu"
+alias pacin="sudo pacman -Syu"
+# Remove JUST that package
+alias pacrm="sudo pacman -R"
+# Safer removal option
+alias pacrms="sudo pacman -Rsu"
+# Remove package and all dependancies (even if it breaks something)
+alias pacrmf="sudo pacman -Rc"
+# Remove all TRUE orphan packages
+alias pacclean="sudo pacman -Rns $(pacman -Qtdq)" 
+
+# Empty the Trash
+alias trash="sudo rm -rf -f -r ~/.local/share/Trash/*"
+
+# (Super User) Change User
+alias chsu="sudo su -l"
+
+# CMatrix Terminal Visualizer
+alias matrix="cmatrix -lba"
+# Pipes
+alias pipe="pipes.sh"
+
+# Git Aliases & Functions
+alias gits="git status"
+alias gitcl="git clone"
+gitpush () {
+    git add .
+    git commit -m "$1"
+    git push
+}
+
+
+# Rust & Cargo
+alias rust="rustup"
+alias rup="rustup"
+alias rupup="rustup update"
+alias car="cargo"
+alias carr="cargo run"
+
+
+# Node Aliases & Functions
+alias nr="npm run"
+alias ni="npm install"
+alias nig="npm install -g"
+alias nid="npm install --save-dev"
+alias nun="npm uninstall"
+
+# Buffalo Aliases
+alias buf="buffalo"
+
+# Postgres Aliases & Functions
+alias pgserve="pg_ctl start"
+alias pg="pg_ctl"
+alias pgstop="sudo systemctl stop postgresql.service"
+alias pgstart="sudo systemctl start postgresql.service"
+alias pgenable="sudo systemctl enable postgresql.service"
+alias pgstat="sudo systemctl status postgresql.service"
+
+
+# Youtube DL Aliases and Functions
+ydl () { youtube-dl $1 }
+ydm () { youtube-dl -x --audio-quality 0 --audio-format "mp3" $1 }
+
+# Create React App
+alias cra="create-react-app"
+
+#Docker
+alias docker="podman"
+alias dc="sudo docker-compose"
+alias doc="sudo podman"
+docker_remove_all () {
+    sudo docker image rm -f $(sudo docker image ls -q)
+}
+
+# .ISO to USB
+isotousb () {
+	sudo dd if=$1 of=$2
+}
+
+# Mouse Accelleration Settings
+# xinput set-prop 13 147 3.000000, 0.000000, 0.000000, 0.000000, 3.000000, 0.000000, 0.000000, 0.000000, 1.000000
+# xinput set-prop 13 147 8.000000, 1.000000, 0.000000, 0.000000, 8.000000, 1.000000, 0.000000, 0.000000, 0.900000
+
+alias stat="systemctl --user status"
+alias start="systemctl --user start"
+alias restart="systemctl --user restart"
+alias disable="systemctl --user disable"
+alias enable="systemctl --user enable"
+alias stop="systemctl --user stop"
+alias kill="systemctl --user kill"
+
+bitchart () {
+    # Good defaults: 60, 240, 30 
+    watch -n $1 bitcoin-chart-cli --days $2 --width $3 --height $4
+}
+
+
+### ###                          ### ###
+### ###  Large System Functions  ### ###
+### ###                          ### ###
+
+# Go up any # of directories - e.g. up 3
+up () {
+    if [[ "$#" < 1 ]] ; then
+        cd ..
+    else
+        CDSTR=""
+        for i in {1..$1} ; do
+            CDSTR="../$CDSTR"
+        done
+        cd $CDSTR
+    fi
+}
+
+# Backup .zshrc & .bashrc (One command)
+bkupz() {
+    echo "Bout to back up that shell config..."
+	cp $HOME/.zshrc $HOME/Documents/Code/shell_config_backup
+	cp $HOME/.bashrc $HOME/Documents/Code/shell_config_backup
+    cp -r $HOME/.sconfig $HOME/Documents/Code/shell_config_backup
+	cd $HOME/Documents/Code/shell_config_backup 
+	git add .
+	git commit -m "Ahh. A backup is this." 
+	git push
+	cd $HOME
+}
+
+extract () {
+    if [ -z ${1} ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+        echo "Usage: extract <archive> [directory]"
+        echo "Example: extract presentation.zip."
+        echo "Valid archive types are:"
+        echo "tar.bz2, tar.gz, tar.xz, tar, bz2, gz, tbz2,"
+        echo "tbz, tgz, lzo, rar, zip, 7z, xz, txz, lzma and tlz"
+    else
+        case "$1" in
+            *.tar.bz2|*.tbz2|*.tbz)         tar xvjf "$1" ;;
+            *.tgz)                          tar zxvf "$1" ;;
+            *.tar.gz)                       tar xvzf "$1" ;;
+            *.tar.xz)                       tar xvJf "$1" ;;
+            *.tar)                          tar xvf "$1" ;;
+            *.rar)                          7z x "$1" ;;
+            *.zip)                          unzip "$1" ;;
+            *.7z)                           7z x "$1" ;;
+            *.lzo)                          lzop -d  "$1" ;;
+            *.gz)                           gunzip "$1" ;;
+            *.bz2)                          bunzip2 "$1" ;;
+            *.Z)                            uncompress "$1" ;;
+            *.xz|*.txz|*.lzma|*.tlz)        xz -d "$1" ;;
+            *) echo "Sorry, '$1' could not be decompressed." ;;
+        esac
+    fi
+}
+
+getnews () {
+     curl https://newsapi.org/v2/top-headlines -s -G -d sources=$1 -d apiKey=b5e2ba4b5d0341f49bd66286c9bee8af | jq -r '.articles[] | .title, .url, ""'
+}
+
+# Start My Day
+smd () {
+  echo "\n ### Bleep Bloop. Welcome back Master King"
+  echo "\n ### Updating some shit, be back soon...\n"
+  pacup
+  echo "\n\nThe weather in Tuscaloosa right now:\n"
+  ansiweather -l Tuscaloosa -u imperial -a false
+  echo "\n\n\nNews from The Economist:\n"
+  getnews the-economist
+  echo "\nNews from Hacker News:\n"
+  getnews hacker-news
+}
+
+morenews () {
+  echo "\nMore News!\n"
+  echo "\n\n\nNews from The BBC:\n"
+  getnews bbc-news
+  echo "\n\n\nNews from Ars Technica:\n"
+  getnews ars-technica
+  echo "\n\n\nNews from Bloomberg:\n"
+  getnews bloomberg
+  echo "\n\n\nNews from ReCode:\n"
+  getnews recode
+  echo "\n\n\nNews from The Verge:\n"
+  getnews the-verge
+  echo "\n\n\nNews from The Wall Street Journal:\n"
+  getnews the-wall-street-journal
+  echo "\nNews from The Washington Post:\n"
+  getnews the-washington-post
+  echo "\n\n\nNews from The Economist:\n"
+  getnews the-economist
+  echo "\nNews from Hacker News:\n"
+
+}
+
+giffy() {
+	# E.g. giffy ./filename.jpg ./output_location 3 512 100 10 2
+	# $1 : Input File
+	# $2 : Mode: { 
+	#	0=combo,
+	#	1=triangle, 
+	#	2=rect, 
+	#	3=ellipse, 
+	#	4=circle,
+	#	5=rotatedrect, 
+	#	6=beziers, 
+	#	7=rotatedellipse, 
+	#	8=polygon
+	# }
+	# $3 : Size/Resolution (1024)
+	# $4 : Number of Frames (100+)
+	# $5 : Iterations (be careful)
+	# $6 : # of CPU Workers
+	rm -rf ./tmp
+	echo "\n\n"
+	echo "### Oh, a hooman! Umm..." 
+	echo "### You wanted to make a gif huh...\n" 
+	echo "### Neato bandito!" 
+	echo "### Lemme cook this file up real (not) quick \n\n" 
+	mkdir tmp
+
+	for i in {0..$5} ; do
+		if [[ $i == 1 ]] ; then
+        echo "### Oh boy, here I go vectorizing again!"
+    	fi
+
+    	primitive -i ./$1 -o ./tmp/bg.$i.svg -n $4 -m $2 -s $3 -j $6
+    	echo "\n### Well, there goes #"$i""
+    	echo "### On to the next one!\n"
+	done
+	echo "\n### Bleep Bloop. Now Converting To .gif Image Format\n"
+	convert -delay 10 -loop 0 ./tmp/bg.*.png ./tmp/bg.gif
+	echo "### And... I'm Done! Get outa here you dirty hooman!"
+}
+
+withDots() {
+	"$@" &
+	while kill -0 $!; do
+    	printf '.' > /dev/tty
+    	sleep 0.5
+	done
+}
+
+
+addunpuser () {
+    sudo sysctl kernel.unprivileged_userns_clone $1
+}
+
+
+
+### ###                              ### ###
+### ###                              ### ###
+### ###                              ### ###
+### ###  END OF ALIASES & FUNCTIONS  ### ###
+### ###                              ### ###
+### ###                              ### ###
+### ###                              ### ###
+
+# dunu.DN-20000:feliX11 
+
+# 5209e9de5f14aa058d4c7329f01853d97c1f3c040d3a7a3b44504104d808097d
+# k: [159.203.64.192] => {
+#     "msg": [
+#         [
+#             "\"#                          Congratulations!                            #\"",
+#             "\"#                     Your Algo server is running.                     #\"",
+#             "\"#    Config files and certificates are in the ./configs/ directory.    #\"",
+#             "\"#              Go to https://whoer.net/ after connecting               #\"",
+#             "\"#        and ensure that all your traffic passes through the VPN.      #\"",
+#             "\"#                     Local DNS resolver 172.25.231.235, fd00::9:e7eb                   #\"",
+#             ""
+#         ],
+#         "    \"#        The p12 and SSH keys password for new users is q4hfF@dfO       #\"\n",
+#         "    \"#        The CA key password is VC@FBzVCImjWlm5l       #\"\n",
+#         "    \"#      Shell access: ssh -i configs/algo.pem root@159.203.64.192        #\"\n"
+#     ]
+# }
+
+
+# ok: [159.203.169.59] => {
+#     "msg": [
+#         [
+#             "\"#                          Congratulations!                            #\"",
+#             "\"#                     Your Algo server is running.                     #\"",
+#             "\"#    Config files and certificates are in the ./configs/ directory.    #\"",
+#             "\"#              Go to https://whoer.net/ after connecting               #\"",
+#             "\"#        and ensure that all your traffic passes through the VPN.      #\"",
+#             "\"#                     Local DNS resolver 172.24.117.23, fd00::8:7517                   #\"",
+#             ""
+#         ],
+#         "    \"#        The p12 and SSH keys password for new users is Mr6n7@eky       #\"\n",
+#         "    \"#        The CA key password is 2mYHAKAe2mmiWvL7       #\"\n",
+#         "    \"#      Shell access: ssh -i configs/algo.pem root@159.203.169.59        #\"\n"
+#     ]
+# }
+
