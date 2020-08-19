@@ -172,6 +172,17 @@ up () {
     fi
 }
 
+# Access EC2 Instances Behind NAT/Firewall
+accessec() {
+	Host i-* mi-*
+   	ProxyCommand sh -c "aws ssm start-session --"$1" %h --"$2" AWS-StartSSHSession --$3 'portNumber=%p'"
+   	UserKnownHostsFile /dev/null
+   	StrictHostKeyChecking no
+   	User ubuntu
+   	LogLevel ERROR
+   	DynamicForward 5060
+}
+
 # Backup .zshrc & .bashrc (One command)
 bkupz() {
     echo "Bout to back up that shell config..."
